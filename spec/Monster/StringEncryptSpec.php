@@ -39,6 +39,7 @@ class StringEncryptSpec extends ObjectBehavior
         $iv = $this->createBase64EncodeIv();
         $this->setIv($iv);
         $encryptData = $this->encrypt("phone");
+        $encryptData->shouldBeString();
         $this->decrypt($encryptData)->shouldReturn("phone");
     }
 }
