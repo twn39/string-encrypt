@@ -16,15 +16,20 @@ class StringEncrypt
      * @var string
      * http://php.net/manual/zh/function.openssl-get-cipher-methods.php
      */
-    private $method;
+    private $cipher;
 
     /**
      * StringEncrypt constructor.
-     * @param string $method
+     * @param string $cipher
      */
-    public function __construct($method = "AES-256-CFB")
+    public function __construct($cipher = "AES-256-CFB")
     {
-        $this->method = $method;
+        $this->cipher = $cipher;
+    }
+
+    public function getCipher()
+    {
+        return $this->cipher;
     }
 
     /**
@@ -35,9 +40,20 @@ class StringEncrypt
         $this->key = $key;
     }
 
+    /**
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * @param $iv
+     */
     public function setIv($iv)
     {
-        $ivLen = openssl_cipher_iv_length($this->method);
+        $ivLen = openssl_cipher_iv_length($this->cipher);
         $this->iv = $ivLen === strlen($iv)
             ? $iv
             : base64_decode($iv);
@@ -48,7 +64,7 @@ class StringEncrypt
      */
     public function setCipher($cipher)
     {
-        $this->method = $cipher;
+        $this->cipher = $cipher;
     }
 
     /**
@@ -57,7 +73,7 @@ class StringEncrypt
      */
     public function encrypt($data)
     {
-        return openssl_encrypt($data, $this->method, $this->key, 0, $this->iv);
+        return openssl_encrypt($data, $this->cipher, $this->key, 0, $this->iv);
     }
 
     /**
@@ -66,7 +82,7 @@ class StringEncrypt
      */
     public function decrypt($data)
     {
-        return openssl_decrypt($data, $this->method, $this->key, 0, $this->iv);
+        return openssl_decrypt($data, $this->cipher, $this->key, 0, $this->iv);
     }
 
     /**
@@ -74,7 +90,7 @@ class StringEncrypt
      */
     public function createBase64EncodeIv()
     {
-        $ivLen = openssl_cipher_iv_length($this->method);
+        $ivLen = openssl_cipher_iv_length($this->cipher);
         return base64_encode(openssl_random_pseudo_bytes($ivLen));
     }
 }
